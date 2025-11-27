@@ -124,7 +124,7 @@ def retrieve_news(query, top_k=8):
     
     return results
 
-# === Generate HTML Template (Sama seperti Flask) ===
+# === Generate HTML Template ===
 def generate_html(query="", results=None):
     results_html = ""
     
@@ -574,7 +574,7 @@ with col2:
 with col3:
     st.markdown("""
     <div style="background: white; border-radius: 15px; padding: 30px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-top: 4px solid #1B3C53;">
-        <div style="font-size: 3em; margin-bottom: 15px;">🤖</div>
+        <div style="font-size: 3em; margin-bottom: 15px;">📈</div>
         <div style="font-size: 2.5em; font-weight: bold; color: #1B3C53; margin-bottom: 5px;">Naive Bayes</div>
         <div style="color: #456882; font-size: 1em;">Algoritma ML</div>
     </div>
@@ -582,19 +582,17 @@ with col3:
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# Search Box
-search_col1, search_col2 = st.columns([5, 1])
-
-with search_col1:
+# === FORM untuk menangkap Enter key ===
+with st.form(key='search_form', clear_on_submit=False):
     query = st.text_input(
         "",
         placeholder="🔍 Masukkan kata kunci atau teks berita yang ingin diverifikasi...",
         key="search_query",
         label_visibility="collapsed"
     )
-
-with search_col2:
-    search_button = st.button("🔍 Analisis", use_container_width=True)
+    
+    # Button submit di dalam form
+    search_button = st.form_submit_button("🔍 Analisis", use_container_width=True)
 
 # Custom CSS untuk search box
 st.markdown("""
@@ -611,27 +609,32 @@ st.markdown("""
         box-shadow: 0 0 0 3px rgba(27, 60, 83, 0.1);
     }
     
-    .stButton > button {
-        background: linear-gradient(135deg, #1B3C53 0%, #234C6A 100%);
-        color: white;
-        border: none;
-        border-radius: 50px;
-        padding: 18px 45px;
-        font-size: 1.1em;
-        font-weight: 600;
-        height: 58px;
+    .stButton > button, .stFormSubmitButton > button {
+        background: linear-gradient(135deg, #1B3C53 0%, #234C6A 100%) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 50px !important;
+        padding: 18px 45px !important;
+        font-size: 1.1em !important;
+        font-weight: 600 !important;
+        height: 58px !important;
     }
     
-    .stButton > button:hover {
-        background: linear-gradient(135deg, #234C6A 0%, #456882 100%);
+    .stButton > button:hover, .stFormSubmitButton > button:hover {
+        background: linear-gradient(135deg, #234C6A 0%, #456882 100%) !important;
         transform: scale(1.05);
+    }
+    
+    /* Hide form border */
+    .stForm {
+        border: none !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# Process search
+# Process search - TRIGGER BAIK DARI ENTER MAUPUN KLIK BUTTON
 if search_button and query:
     with st.spinner("🔄 Menganalisis berita..."):
         results = retrieve_news(query, top_k=8)
@@ -640,9 +643,6 @@ if search_button and query:
     html_content = generate_html(query, results)
     components.html(html_content, height=1200, scrolling=True)
 
-elif query and not search_button:
-    # Auto search when typing (optional)
-    pass
 else:
     st.markdown("""
     <div style="background: white; border-radius: 15px; padding: 60px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
